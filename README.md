@@ -2,6 +2,8 @@
 
 ![Math Suite Banner](https://img.shields.io/badge/Status-Active-success?style=for-the-badge) ![Vanilla JS](https://img.shields.io/badge/Vanilla_JS-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black) ![Three.js](https://img.shields.io/badge/Three.js-black?style=for-the-badge&logo=three.js&logoColor=white) 
 
+**[🚀 Try the Live Demo here!](https://math-suite.vercel.app/)**
+
 A premium, cinematic mathematical engine built entirely in Vanilla HTML, CSS, and JavaScript. This project goes far beyond a simple calculator by integrating 3D visualizations, secure expression evaluation, live graphing, and a breathtaking glassmorphic UI.
 
 ## ✨ Core Features

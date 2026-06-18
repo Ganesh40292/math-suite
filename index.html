@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Ultra-Advanced 3D Mathematical Suite — A cinematic scientific calculator with 3D particle intro, matrix operations, live 2D graphing, and base conversion.">
+  <meta name="theme-color" content="#0d0f1a">
+  <meta property="og:title" content="Ultra-Advanced 3D Math Suite">
+  <meta property="og:description" content="Cinematic scientific calculator with Three.js 3D intro, matrix ops, live graphing, and base conversion.">
+  <meta property="og:type" content="website">
+  <title>Ultra-Advanced 3D Math Suite</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- KaTeX CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/intro.css">
+  <link rel="stylesheet" href="css/calculator.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/upgrades.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       3D INTRO OVERLAY
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="intro-overlay">
+    <canvas id="intro-canvas"></canvas>
+    <div class="intro-title">
+      <h1>Math Suite</h1>
+      <p>Ultra-Advanced 3D Mathematical Engine</p>
+    </div>
+  </div>
+
+  <!-- Background Canvas (persistent subtle particles) -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- ── Global Actions (Theme, History, Help) ── -->
+  <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+  
+  <button id="history-toggle" class="history-toggle" aria-label="Toggle history">
+    ⏱️<span class="badge" aria-hidden="true">0</span>
+  </button>
+  
+  <button id="help-toggle" class="help-btn" aria-label="Keyboard shortcuts">?</button>
+
+  <!-- ── History Drawer ── -->
+  <div id="history-backdrop" class="history-backdrop"></div>
+  <aside id="history-drawer" class="history-drawer">
+    <div class="history-drawer-header">
+      <h2>History</h2>
+      <div class="history-drawer-actions">
+        <button id="history-clear" class="history-action-btn">Clear All</button>
+        <button id="history-close" class="history-close-btn">×</button>
+      </div>
+    </div>
+    <div id="history-list" class="history-list">
+      <!-- History items injected here -->
+    </div>
+  </aside>
+
+  <!-- ── Keyboard Shortcuts Modal ── -->
+  <div id="shortcuts-modal" class="shortcuts-overlay">
+    <div class="shortcuts-modal">
+      <div class="shortcuts-header">
+        <h2>Keyboard Shortcuts</h2>
+        <button id="shortcuts-close" class="shortcuts-close">×</button>
+      </div>
+      <div class="shortcuts-body">
+        <div class="shortcuts-section">
+          <h3>Basic Input</h3>
+          <div class="shortcut-row">
+            <span>Numbers & Operators</span>
+            <span class="shortcut-key"><kbd>0</kbd>–<kbd>9</kbd>, <kbd>+</kbd>, <kbd>-</kbd>, <kbd>*</kbd>, <kbd>/</kbd>, <kbd>.</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Evaluate</span>
+            <span class="shortcut-key"><kbd>Enter</kbd> or <kbd>=</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Delete last character</span>
+            <span class="shortcut-key"><kbd>Backspace</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Clear All (AC)</span>
+            <span class="shortcut-key"><kbd>Esc</kbd> or <kbd>Delete</kbd></span>
+          </div>
+        </div>
+        <div class="shortcuts-section">
+          <h3>Advanced</h3>
+          <div class="shortcut-row">
+            <span>Power (xⁿ)</span>
+            <span class="shortcut-key"><kbd>^</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Percentage</span>
+            <span class="shortcut-key"><kbd>%</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Parentheses</span>
+            <span class="shortcut-key"><kbd>(</kbd>, <kbd>)</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span>Show Shortcuts</span>
+            <span class="shortcut-key"><kbd>?</kbd></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast Container ── -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       MAIN APPLICATION
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <main id="app-container">
+    <header class="app-header">
+      <h1>Math Suite</h1>
+      <div class="subtitle">Scientific · Matrix · Graphing · Converter</div>
+    </header>
+
+    <div class="calculator-shell glass">
+      <!-- ── Tab Navigation ── -->
+      <nav class="tab-nav" role="tablist" aria-label="Calculator modes">
+        <button class="tab-btn active" data-tab="calc" role="tab" aria-selected="true" id="tab-calc">
+          <span class="tab-icon">⚡</span>Calculator
+        </button>
+        <button class="tab-btn" data-tab="matrix" role="tab" aria-selected="false" id="tab-matrix">
+          <span class="tab-icon">▦</span>Matrix
+        </button>
+        <button class="tab-btn" data-tab="graph" role="tab" aria-selected="false" id="tab-graph">
+          <span class="tab-icon">📈</span>Graph
+        </button>
+        <button class="tab-btn" data-tab="surface" role="tab" aria-selected="false" id="tab-surface">
+          <span class="tab-icon">🧊</span>3D
+        </button>
+        <button class="tab-btn" data-tab="converter" role="tab" aria-selected="false" id="tab-converter">
+          <span class="tab-icon">⟁</span>Converter
+        </button>
+      </nav>
+
+      <!-- ── Tab Panels ── -->
+      <div class="tab-panels">
+
+        <!-- ─────────── CALCULATOR PANEL ─────────── -->
+        <div class="tab-panel active" id="panel-calc" role="tabpanel" aria-labelledby="tab-calc">
+
+          <!-- Display -->
+          <div class="calc-display">
+            <span class="memory-indicator" id="memory-indicator"></span>
+            <span class="angle-indicator" id="angle-indicator" title="Toggle Deg/Rad">DEG</span>
+            <div class="display-expression" id="display-expression">
+              <span style="opacity: 0.3">0</span>
+            </div>
+            <div class="display-result" id="display-result">0</div>
+            <button id="copy-result-btn" class="copy-result-btn" title="Copy result">📋</button>
+          </div>
+
+          <!-- Buttons -->
+          <div class="calc-buttons">
+
+            <!-- Scientific Functions Row 1 -->
+            <div class="btn-row-scientific">
+              <button class="calc-btn btn-scientific" data-value="sin" data-type="function">sin</button>
+              <button class="calc-btn btn-scientific" data-value="cos" data-type="function">cos</button>
+              <button class="calc-btn btn-scientific" data-value="tan" data-type="function">tan</button>
+              <button class="calc-btn btn-scientific" data-value="log10" data-type="function">log</button>
+              <button class="calc-btn btn-scientific" data-value="log" data-type="function">ln</button>
+            </div>
+
+            <!-- Scientific Functions Row 2 -->
+            <div class="btn-row-scientific">
+              <button class="calc-btn btn-scientific" data-value="asin" data-type="function">sin⁻¹</button>
+              <button class="calc-btn btn-scientific" data-value="acos" data-type="function">cos⁻¹</button>
+              <button class="calc-btn btn-scientific" data-value="atan" data-type="function">tan⁻¹</button>
+              <button class="calc-btn btn-scientific" data-value="sqrt" data-type="function">√</button>
+              <button class="calc-btn btn-scientific" data-value="abs" data-type="function">|x|</button>
+            </div>
+
+            <!-- Scientific Functions Row 3 -->
+            <div class="btn-row-scientific">
+              <button class="calc-btn btn-scientific" data-value="^2" data-type="operator">x²</button>
+              <button class="calc-btn btn-scientific" data-value="^3" data-type="operator">x³</button>
+              <button class="calc-btn btn-scientific" data-value="^" data-type="operator">xⁿ</button>
+              <button class="calc-btn btn-scientific" data-value="factorial" data-type="function">n!</button>
+              <button class="calc-btn btn-scientific" data-value="π" data-type="constant">π</button>
+            </div>
+
+            <!-- Memory Row -->
+            <div class="btn-row-memory">
+              <button class="calc-btn btn-memory" data-value="MC" data-type="memory">MC</button>
+              <button class="calc-btn btn-memory" data-value="MR" data-type="memory">MR</button>
+              <button class="calc-btn btn-memory" data-value="M+" data-type="memory">M+</button>
+              <button class="calc-btn btn-memory" data-value="M-" data-type="memory">M−</button>
+              <button class="calc-btn btn-memory" data-value="e" data-type="constant" style="color: var(--accent-primary);">e</button>
+            </div>
+
+            <!-- Main Number Pad -->
+            <div class="btn-grid-main">
+              <!-- Row 1: Clear, Brackets, Divide -->
+              <button class="calc-btn btn-action" data-value="" data-type="clear">AC</button>
+              <button class="calc-btn btn-operator" data-value="(" data-type="paren">(</button>
+              <button class="calc-btn btn-operator" data-value=")" data-type="paren">)</button>
+              <button class="calc-btn btn-operator" data-value="÷" data-type="operator">÷</button>
+
+              <!-- Row 2: 7-8-9-× -->
+              <button class="calc-btn btn-number" data-value="7" data-type="number">7</button>
+              <button class="calc-btn btn-number" data-value="8" data-type="number">8</button>
+              <button class="calc-btn btn-number" data-value="9" data-type="number">9</button>
+              <button class="calc-btn btn-operator" data-value="×" data-type="operator">×</button>
+
+              <!-- Row 3: 4-5-6-− -->
+              <button class="calc-btn btn-number" data-value="4" data-type="number">4</button>
+              <button class="calc-btn btn-number" data-value="5" data-type="number">5</button>
+              <button class="calc-btn btn-number" data-value="6" data-type="number">6</button>
+              <button class="calc-btn btn-operator" data-value="−" data-type="operator">−</button>
+
+              <!-- Row 4: 1-2-3-+ -->
+              <button class="calc-btn btn-number" data-value="1" data-type="number">1</button>
+              <button class="calc-btn btn-number" data-value="2" data-type="number">2</button>
+              <button class="calc-btn btn-number" data-value="3" data-type="number">3</button>
+              <button class="calc-btn btn-operator" data-value="+" data-type="operator">+</button>
+
+              <!-- Row 5: ±, 0, ., = -->
+              <button class="calc-btn btn-action" data-value="" data-type="negate">±</button>
+              <button class="calc-btn btn-number" data-value="0" data-type="number">0</button>
+              <button class="calc-btn btn-number" data-value="." data-type="decimal">.</button>
+              <button class="calc-btn btn-equals" data-value="=" data-type="equals">=</button>
+
+              <!-- Row 6: Percent and Backspace -->
+              <button class="calc-btn btn-action btn-wide" data-value="%" data-type="percent">%</button>
+              <button class="calc-btn btn-action btn-wide" data-value="" data-type="backspace">⌫</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─────────── MATRIX PANEL ─────────── -->
+        <div class="tab-panel" id="panel-matrix" role="tabpanel" aria-labelledby="tab-matrix">
+          <div class="panel-title"><span class="icon">▦</span> Matrix Operations</div>
+
+          <!-- Size Selector -->
+          <div class="matrix-controls">
+            <button class="matrix-size-btn active" data-size="2">2×2</button>
+            <button class="matrix-size-btn" data-size="3">3×3</button>
+          </div>
+
+          <!-- Matrix Inputs -->
+          <div class="matrix-container">
+            <div class="matrix-block">
+              <div class="matrix-label">Matrix A</div>
+              <div class="matrix-grid size-2" id="matrix-grid-a"></div>
+            </div>
+            <div class="matrix-block">
+              <div class="matrix-label">Matrix B</div>
+              <div class="matrix-grid size-2" id="matrix-grid-b"></div>
+            </div>
+          </div>
+
+          <!-- Operations -->
+          <div class="matrix-ops">
+            <button class="matrix-op-btn" data-op="det">det(A)</button>
+            <button class="matrix-op-btn" data-op="inv">A⁻¹</button>
+            <button class="matrix-op-btn" data-op="transpose">Aᵀ</button>
+            <button class="matrix-op-btn" data-op="multiply">A × B</button>
+            <button class="matrix-op-btn" data-op="add">A + B</button>
+            <button class="matrix-op-btn" data-op="subtract">A − B</button>
+            <button class="matrix-op-btn" data-op="cross">Cross</button>
+          </div>
+
+          <!-- Result -->
+          <div class="matrix-result">
+            <div id="matrix-result-content">
+              <div class="matrix-result-label">Result will appear here</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ─────────── GRAPHING PANEL ─────────── -->
+        <div class="tab-panel" id="panel-graph" role="tabpanel" aria-labelledby="tab-graph">
+          <div class="panel-title"><span class="icon">📈</span> Live 2D Graphing</div>
+
+          <!-- Equation Inputs -->
+          <div class="graph-inputs">
+            <div class="graph-input-row">
+              <span class="graph-color-dot"></span>
+              <input type="text" class="graph-equation-input" id="graph-eq-1" placeholder="y = sin(x)" autocomplete="off">
+            </div>
+            <div class="graph-input-row">
+              <span class="graph-color-dot"></span>
+              <input type="text" class="graph-equation-input" id="graph-eq-2" placeholder="y = x^2" autocomplete="off">
+            </div>
+            <div class="graph-input-row">
+              <span class="graph-color-dot"></span>
+              <input type="text" class="graph-equation-input" id="graph-eq-3" placeholder="y = cos(x)" autocomplete="off">
+            </div>
+            <div class="graph-input-row">
+              <span class="graph-color-dot"></span>
+              <input type="text" class="graph-equation-input" id="graph-eq-4" placeholder="y = log(x)" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Graph Container -->
+          <div class="graph-toolbar">
+            <button id="graph-export-btn" class="graph-export-btn">📸 Export PNG</button>
+          </div>
+          <div class="graph-container">
+            <div id="graph-plot" style="width:100%; height:300px;"></div>
+            <div class="graph-error" id="graph-error"></div>
+          </div>
+        </div>
+
+        <!-- ─────────── 3D SURFACE PLOTTER PANEL ─────────── -->
+        <div class="tab-panel" id="panel-surface" role="tabpanel" aria-labelledby="tab-surface">
+          <div class="panel-title"><span class="icon">🧊</span> 3D Surface Plotter</div>
+          
+          <div class="surface-controls">
+            <input type="text" id="surface-equation" class="surface-equation-input" placeholder="z = f(x, y) e.g. sin(x) * cos(y)" autocomplete="off">
+            <button id="surface-render-btn" class="surface-render-btn">Render</button>
+          </div>
+          
+          <div class="surface-presets">
+            <button class="surface-preset-btn" data-eq="sin(x) * cos(y)">Ripple</button>
+            <button class="surface-preset-btn" data-eq="x^2 - y^2">Saddle</button>
+            <button class="surface-preset-btn" data-eq="sin(sqrt(x^2 + y^2)) * 3">Drop</button>
+            <button class="surface-preset-btn" data-eq="sin(x) + sin(y)">Waves</button>
+          </div>
+
+          <div class="surface-canvas-container" id="surface-canvas">
+            <!-- Canvas injected by Three.js -->
+            <div class="surface-info" id="surface-info">z ∈ [0.00, 0.00] | Drag to rotate, scroll to zoom</div>
+            <div class="surface-error" id="surface-error" style="display: none;"></div>
+          </div>
+        </div>
+
+        <!-- ─────────── BASE CONVERTER PANEL ─────────── -->
+        <div class="tab-panel" id="panel-converter" role="tabpanel" aria-labelledby="tab-converter">
+          <div class="panel-title"><span class="icon">⟁</span> Base Converter</div>
+
+          <div class="converter-grid">
+            <div class="converter-field">
+              <label class="converter-label" for="conv-binary">
+                Binary <span class="base-tag">BASE 2</span>
+              </label>
+              <input type="text" class="converter-input" id="conv-binary" placeholder="e.g. 11111111" autocomplete="off">
+            </div>
+
+            <div class="converter-field">
+              <label class="converter-label" for="conv-octal">
+                Octal <span class="base-tag">BASE 8</span>
+              </label>
+              <input type="text" class="converter-input" id="conv-octal" placeholder="e.g. 377" autocomplete="off">
+            </div>
+
+            <div class="converter-field">
+              <label class="converter-label" for="conv-decimal">
+                Decimal <span class="base-tag">BASE 10</span>
+              </label>
+              <input type="text" class="converter-input" id="conv-decimal" placeholder="e.g. 255" autocomplete="off">
+            </div>
+
+            <div class="converter-field">
+              <label class="converter-label" for="conv-hex">
+                Hexadecimal <span class="base-tag">BASE 16</span>
+              </label>
+              <input type="text" class="converter-input" id="conv-hex" placeholder="e.g. FF" autocomplete="off">
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.tab-panels -->
+    </div><!-- /.calculator-shell -->
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       EXTERNAL LIBRARIES (CDN)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- Three.js -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+  <!-- Math.js -->
+  <script src="https://unpkg.com/mathjs@12.4.0/lib/browser/math.js"></script>
+
+  <!-- KaTeX -->
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+  <script src="https://unpkg.com/function-plot@1.25.0/dist/function-plot.js"></script>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       APPLICATION MODULES (order matters: utils → modules → app)
+       ═══════════════════════════════════════════════════════════════════════  <!-- Custom Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/intro.js"></script>
+  <script src="js/scientific.js"></script>
+  <script src="js/calculator.js"></script>
+  <script src="js/matrix.js"></script>
+  <script src="js/graphing.js"></script>
+  <script src="js/surface3d.js"></script>
+  <script src="js/base-converter.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

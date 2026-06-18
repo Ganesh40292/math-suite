@@ -1,0 +1,246 @@
+/* ==========================================================================
+   Responsive Styles — Media Queries
+   ========================================================================== */
+
+/* ── Large tablets and small desktops ── */
+@media (max-width: 1200px) {
+  :root {
+    --calc-max-width: 460px;
+  }
+}
+
+/* ── Tablets ── */
+@media (max-width: 992px) {
+  :root {
+    --calc-max-width: 440px;
+    --calc-btn-size: clamp(44px, 9vw, 58px);
+  }
+
+  #app-container {
+    padding: var(--space-md) var(--space-sm);
+  }
+}
+
+/* ── Large phones / small tablets ── */
+@media (max-width: 768px) {
+  :root {
+    --calc-max-width: 100%;
+    --calc-btn-size: clamp(44px, 12vw, 56px);
+    --display-height: 100px;
+  }
+
+  #app-container {
+    padding: var(--space-sm) var(--space-xs);
+    justify-content: flex-start;
+  }
+
+  .app-header {
+    margin-bottom: var(--space-sm);
+  }
+
+  .app-header h1 {
+    font-size: var(--text-lg);
+  }
+
+  .tab-btn {
+    padding: var(--space-2xs) var(--space-xs);
+    font-size: 0.65rem;
+  }
+
+  .tab-btn .tab-icon {
+    display: none;
+  }
+
+  .tab-panel {
+    padding: var(--space-sm);
+  }
+
+  .calc-display {
+    padding: var(--space-sm) var(--space-md);
+    min-height: 90px;
+  }
+
+  .display-result {
+    font-size: var(--text-xl);
+  }
+
+  .btn-row-scientific {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 3px;
+  }
+
+  .calc-btn.btn-scientific {
+    font-size: 0.65rem;
+    height: 36px;
+    padding: 0 2px;
+  }
+
+  .calc-btn.btn-memory {
+    height: 34px;
+    font-size: 0.65rem;
+  }
+
+  .matrix-container {
+    flex-direction: column;
+  }
+
+  .matrix-block {
+    min-width: 100%;
+  }
+
+  .graph-container {
+    min-height: 250px;
+  }
+}
+
+/* ── Small phones ── */
+@media (max-width: 480px) {
+  :root {
+    --calc-btn-size: clamp(40px, 14vw, 52px);
+    --display-height: 85px;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  #app-container {
+    padding: var(--space-xs);
+  }
+
+  .app-header {
+    margin-bottom: var(--space-xs);
+  }
+
+  .app-header .subtitle {
+    display: none;
+  }
+
+  .calculator-shell {
+    border-radius: var(--radius-lg);
+  }
+
+  .tab-nav {
+    padding: var(--space-2xs);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .tab-btn {
+    font-size: 0.6rem;
+    padding: var(--space-2xs);
+  }
+
+  .tab-panels {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .tab-panel {
+    padding: var(--space-xs);
+  }
+
+  .calc-display {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-md);
+    min-height: 80px;
+  }
+
+  .display-expression {
+    font-size: var(--text-xs);
+  }
+
+  .display-result {
+    font-size: var(--text-lg);
+  }
+
+  .calc-btn {
+    border-radius: var(--radius-sm);
+  }
+
+  .btn-row-scientific {
+    gap: 2px;
+  }
+
+  .calc-btn.btn-scientific {
+    font-size: 0.6rem;
+    height: 32px;
+  }
+
+  .calc-btn.btn-memory {
+    font-size: 0.6rem;
+    height: 30px;
+  }
+
+  .btn-grid-main {
+    gap: 4px;
+  }
+
+  .matrix-input {
+    height: 34px;
+    font-size: var(--text-xs);
+  }
+
+  .graph-container {
+    min-height: 220px;
+  }
+
+  .converter-input {
+    height: 42px;
+    font-size: var(--text-sm);
+  }
+}
+
+/* ── Very small screens ── */
+@media (max-width: 360px) {
+  :root {
+    --calc-btn-size: 38px;
+  }
+
+  .calc-btn.btn-number {
+    font-size: var(--text-base);
+  }
+
+  .calc-btn.btn-operator {
+    font-size: var(--text-lg);
+  }
+}
+
+/* ── Landscape on mobile ── */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --calc-btn-size: 36px;
+    --display-height: 70px;
+  }
+
+  .app-header {
+    display: none;
+  }
+
+  #app-container {
+    padding: var(--space-2xs) var(--space-xs);
+  }
+
+  .calc-display {
+    min-height: 60px;
+    padding: var(--space-2xs) var(--space-sm);
+  }
+}
+
+/* ── Prefers reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  #intro-overlay {
+    display: none !important;
+  }
+
+  #app-container {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

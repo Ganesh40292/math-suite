@@ -1,0 +1,371 @@
+/* ==========================================================================
+   Calculator Styles — Layout, Display, Button Grid
+   ========================================================================== */
+
+/* ── App Container ── */
+#app-container {
+  position: relative;
+  z-index: var(--z-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: var(--space-lg) var(--space-md);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity var(--duration-intro) var(--ease-out-expo),
+              transform var(--duration-intro) var(--ease-out-expo);
+}
+
+#app-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── App Header ── */
+.app-header {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+}
+
+.app-header h1 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.app-header .subtitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: var(--space-2xs);
+}
+
+/* ── Calculator Shell ── */
+.calculator-shell {
+  width: 100%;
+  max-width: var(--calc-max-width);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+}
+
+/* ── Tab Navigation ── */
+.tab-nav {
+  display: flex;
+  gap: 2px;
+  padding: var(--space-xs);
+  background: hsla(230, 20%, 10%, 0.5);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  border: var(--glass-border);
+  border-bottom: none;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  background: transparent;
+  border-radius: var(--radius-md);
+  transition: all var(--duration-normal) var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+  background: hsla(0, 0%, 100%, 0.05);
+}
+
+.tab-btn.active {
+  color: var(--text-primary);
+  background: var(--accent-primary-dim);
+  box-shadow: var(--glow-violet);
+}
+
+.tab-btn .tab-icon {
+  display: inline-block;
+  margin-right: var(--space-2xs);
+  font-size: 1.1em;
+}
+
+/* ── Tab Panels ── */
+.tab-panels {
+  background: var(--glass-bg-strong);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+  box-shadow: var(--shadow-lg), var(--shadow-inset);
+}
+
+.tab-panel {
+  display: none;
+  padding: var(--space-md);
+  animation: panelFadeIn var(--duration-normal) var(--ease-out-expo);
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Display Area ── */
+.calc-display {
+  background: hsla(230, 25%, 8%, 0.8);
+  border: 1px solid hsla(0, 0%, 100%, 0.06);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  min-height: var(--display-height);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  position: relative;
+}
+
+.calc-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gradient-primary);
+  opacity: 0.5;
+}
+
+.display-expression {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  min-height: 1.8em;
+  text-align: right;
+  word-break: break-all;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: var(--space-xs);
+}
+
+/* KaTeX overrides for display */
+.display-expression .katex {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.display-result {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  text-align: right;
+  word-break: break-all;
+  line-height: var(--leading-tight);
+  transition: color var(--duration-fast) ease;
+}
+
+.display-result.preview {
+  color: var(--text-tertiary);
+  font-size: var(--text-lg);
+}
+
+.display-result.error {
+  color: var(--accent-error);
+  font-size: var(--text-base);
+  animation: shake 0.4s ease;
+}
+
+/* Memory indicator */
+.memory-indicator {
+  position: absolute;
+  top: var(--space-xs);
+  left: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--accent-secondary);
+  opacity: 0;
+  transition: opacity var(--duration-fast) ease;
+}
+
+.memory-indicator.visible {
+  opacity: 1;
+}
+
+/* Deg/Rad indicator */
+.angle-indicator {
+  position: absolute;
+  top: var(--space-xs);
+  right: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: all var(--duration-fast) ease;
+}
+
+.angle-indicator:hover {
+  background: hsla(265, 90%, 65%, 0.25);
+}
+
+/* ── Button Grid ── */
+.calc-buttons {
+  display: grid;
+  gap: var(--space-xs);
+}
+
+/* Scientific buttons row */
+.btn-row-scientific {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-xs);
+}
+
+.btn-row-memory {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-xs);
+}
+
+/* Main number pad */
+.btn-grid-main {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+}
+
+/* ── Button Styles ── */
+.calc-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--calc-btn-size);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  background: hsla(230, 20%, 18%, 0.5);
+  border: 1px solid hsla(0, 0%, 100%, 0.06);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all var(--duration-fast) var(--ease-out-expo);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.calc-btn:hover {
+  background: var(--bg-surface-hover);
+  border-color: hsla(0, 0%, 100%, 0.1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.calc-btn:active {
+  transform: translateY(0) scale(0.97);
+  background: var(--bg-surface-active);
+}
+
+/* Button variants */
+.calc-btn.btn-number {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-lg);
+}
+
+.calc-btn.btn-operator {
+  color: var(--accent-secondary);
+  font-size: var(--text-xl);
+}
+
+.calc-btn.btn-operator:hover {
+  background: var(--accent-secondary-dim);
+}
+
+.calc-btn.btn-equals {
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  border: none;
+  box-shadow: var(--glow-violet);
+}
+
+.calc-btn.btn-equals:hover {
+  background: hsl(265, 90%, 70%);
+  box-shadow: var(--glow-violet-strong);
+  transform: translateY(-2px);
+}
+
+.calc-btn.btn-equals:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.calc-btn.btn-action {
+  color: var(--accent-tertiary);
+  font-weight: var(--weight-semibold);
+}
+
+.calc-btn.btn-action:hover {
+  background: var(--accent-tertiary-dim);
+}
+
+.calc-btn.btn-scientific {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--accent-primary);
+  height: 42px;
+}
+
+.calc-btn.btn-scientific:hover {
+  background: var(--accent-primary-dim);
+}
+
+.calc-btn.btn-memory {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--accent-warning);
+  height: 38px;
+}
+
+.calc-btn.btn-memory:hover {
+  background: hsla(40, 95%, 60%, 0.12);
+}
+
+/* Ripple effect */
+.calc-btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: hsla(0, 0%, 100%, 0.2);
+  transform: scale(0);
+  animation: ripple-effect 0.5s ease-out forwards;
+  pointer-events: none;
+}
+
+/* Wide button (spans 2 cols) */
+.calc-btn.btn-wide {
+  grid-column: span 2;
+}
